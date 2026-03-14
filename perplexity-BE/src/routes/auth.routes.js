@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { registerValidator } from "../validators/auth.validator.js";
-import { registerController } from "../controllers/auth.controller.js";
+import { registerValidator, loginValidator } from "../validators/auth.validator.js";
+import { registerController, verifyEmailController, loginController, getMeController } from "../controllers/auth.controller.js";
+import { authUser } from "../middlewares/auth.middleware.js";
 
 const authRouter = Router();
 
@@ -13,6 +14,30 @@ const authRouter = Router();
 * @body { username, email, password }
 */
 authRouter.post('/register', registerValidator, registerController);
+
+/*
+* @route GET /api/auth/verify-email
+* @desc Verify user email
+* @access Public
+* @query { token }
+*/
+authRouter.get('/verify-email', verifyEmailController)
+
+/*
+* @route POST /api/auth/login
+* @desc Login a user
+* @access Public
+* @body { email, password }
+*/
+authRouter.post('/login', loginValidator, loginController);
+
+/*
+* @route GET /api/auth/get-me
+* @desc Get current user
+* @access Private
+* @headers { Authorization: Bearer <token> }
+*/
+authRouter.get('/get-me', authUser, getMeController);
 
 
 
