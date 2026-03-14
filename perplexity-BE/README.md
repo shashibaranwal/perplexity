@@ -30,7 +30,9 @@ perplexity-BE/
     ├── config/
     │   └── database.js          # MongoDB connection via Mongoose
     ├── controllers/
-    │   └── auth.controller.js   # Registration logic & email verification
+    │   └── auth.controller.js   # Auth logic (register, login, verify, get-me)
+    ├── middlewares/
+    │   └── auth.middleware.js   # JWT authentication middleware
     ├── models/
     │   ├── user.model.js        # User schema (username, email, password, verified)
     │   ├── chat.model.js        # Chat schema (user ref, title)
@@ -40,7 +42,7 @@ perplexity-BE/
     ├── services/
     │   └── mail.service.js      # Email transport via Nodemailer
     └── validators/
-        └── auth.validator.js    # Request body validation for registration
+        └── auth.validator.js    # Request validation (register & login)
 ```
 
 ---
@@ -102,9 +104,12 @@ The server will start on `http://localhost:3000` (or the port specified in `.env
 
 ### Authentication
 
-| Method | Endpoint              | Description            | Request Body                          |
-| ------ | --------------------- | ---------------------- | ------------------------------------- |
-| POST   | `/api/auth/register`  | Register a new user    | `{ username, email, password }`       |
+| Method | Endpoint                    | Description            | Access  | Request Body / Query                  |
+| ------ | --------------------------- | ---------------------- | ------- | ------------------------------------- |
+| POST   | `/api/auth/register`        | Register a new user    | Public  | `{ username, email, password }`       |
+| GET    | `/api/auth/verify-email`    | Verify user email      | Public  | `?token=<jwt>`                        |
+| POST   | `/api/auth/login`           | Login a user           | Public  | `{ email, password }`                 |
+| GET    | `/api/auth/get-me`          | Get current user       | Private | —                                     |
 
 #### Register — `POST /api/auth/register`
 
@@ -126,16 +131,47 @@ The server will start on `http://localhost:3000` (or the port specified in `.env
 }
 ```
 
-**Error Response (400) — User already exists:**
+On successful registration, a **verification email** is sent to the user's email address.
+
+#### Verify Email — `GET /api/auth/verify-email`
+
+Accepts a `token` query parameter (JWT). Marks the user's email as verified and returns an HTML confirmation page.
+
+#### Login — `POST /api/auth/login`
+
+**Validation Rules:**
+- `email` — required, valid email format
+- `password` — required, minimum 6 characters
+
+**Checks performed:** credentials validation → email verified check.
+
+**Success Response (200):**
 ```json
 {
-  "message": "Username or email is already taken",
-  "success": false,
-  "err": "User already exists."
+  "message": "User logged in successfully",
+  "success": true,
+  "user": {
+    "id": "...",
+    "username": "...",
+    "email": "..."
+  }
 }
 ```
 
-On successful registration, a **verification email** is sent to the user's email address.
+A JWT token is set as an **httpOnly cookie** (`token`) valid for 7 days.
+
+#### Get Me — `GET /api/auth/get-me`
+
+Requires authentication (JWT cookie). Returns the currently authenticated user's profile (password excluded).
+
+**Success Response (200):**
+```json
+{
+  "message": "User data fetched successfully",
+  "success": true,
+  "user": { "..." }
+}
+```
 
 ---
 
