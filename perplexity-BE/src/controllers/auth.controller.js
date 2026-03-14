@@ -93,6 +93,70 @@ export const verifyEmailController = async (req, res) => {
   res.send(html)
 }
 
+/*
+* @route POST /api/auth/resend-verify-email
+* @desc Resend verification email
+* @access Public
+* @body { email }
+*/
+export const resendVerifyEmailController = async (req, res) => {
+  const email = req.body?.email;
+
+  if (!email) {
+    return res.status(400).json({
+      message: "Email is required",
+      success: false,
+      err: "Email not provided"
+    });
+  }
+
+  const user = await userModel.findOne({ email: email.toLowerCase() });
+
+  if(!user){
+    return res.status(400).json({
+      message: "Invalid credentials",
+      success: false,
+      err: "User not found"
+    })
+  }
+
+  if(user.verified){
+    return res.status(400).json({
+      message: "User is already verified",
+      success: false,
+      err: "User already verified"
+    })
+  }
+
+  const emailVerificationToken = jwt.sign({
+    email: user.email
+  }, 
+  process.env.JWT_SECRET,
+  );
+
+  await sendEmail({
+    to: email,
+    subject: 'Welcome to Perplexity',
+    html: `<h1>Welcome to Perplexity, ${user.username}!</h1>
+           <p>Thank you for registering. We're excited to have you on board!</p>
+            <p>Please verify your email address by clicking the link below:</p>
+            <a href="http://localhost:3000/api/auth/verify-email?token=${emailVerificationToken}">Verify Email</a>
+            <p>If you did not create an account, please ignore this email.</p>
+           <p>Best regards,<br/>The Perplexity Team</p>
+          `,
+  });
+
+  res.status(200).json({
+    message: "Verification email sent successfully",
+    success: true,
+    user: {
+      id: user._id,
+      username: user.username,
+      email: user.email
+    }
+  })
+}
+
 
 /*
 * @route POST /api/auth/login
@@ -103,10 +167,10 @@ export const verifyEmailController = async (req, res) => {
 export const loginController = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await userModel.findOne({ email });
+  const user = await userModel.findOne({ email: email.toLowerCase() });
 
   if(!user){
-    res.status(400).json({
+    return res.status(400).json({
       message: "invalid credentials",
       success: false,
       err: "User not found"
