@@ -5,7 +5,7 @@ import { useAuth } from '../hook/useAuth';
 
 const Login = () => {
   const { handleLogin } = useAuth();
-  const { loading, error } = useSelector((state) => state.auth);
+  const { user, loading, error } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -24,6 +24,10 @@ const Login = () => {
       [e.target.name]: e.target.value
     });
   };
+
+  if(!loading && user) {
+    navigate("/");
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
