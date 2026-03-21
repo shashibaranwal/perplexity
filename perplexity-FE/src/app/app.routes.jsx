@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import App from "./App";
 import Register from "../features/auth/pages/Register"
 import Login from "../features/auth/pages/Login"
@@ -20,5 +20,9 @@ export const router = createBrowserRouter([
         element: <Protected>
              <Dashboard />
         </Protected>
+    },
+    {
+        path: "/dashboard",
+        element: <Navigate to="/" />
     }
 ])
