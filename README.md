@@ -1,97 +1,143 @@
-# Perplexity - AI-Powered Search Engine
-
-A full-stack, AI-powered search application that provides intelligent answers to user queries. Built with a modern tech stack featuring React, Express, MongoDB, and LangChain for seamless AI integration.
+<div align="center">
+  <!-- <img src="C:/Users/shash/.gemini/antigravity/brain/fe87098c-485d-41b5-91de-8fd5146bfcd9/perplexity_logo_1774203915494.png" alt="Perplexity Logo" width="120" height="120" /> -->
+  <h1>Perplexity</h1>
+  <p><strong>A Premium AI-Powered Search Engine</strong></p>
+  
+  <p>
+    <img src="https://img.shields.io/badge/React-19.1-blue?logo=react" alt="React" />
+    <img src="https://img.shields.io/badge/Tailwind-4.2-38B2AC?logo=tailwind-css" alt="Tailwind CSS" />
+    <img src="https://img.shields.io/badge/Express-5.2-lightgrey?logo=express" alt="Express" />
+    <img src="https://img.shields.io/badge/MongoDB-9.3-47A248?logo=mongodb" alt="MongoDB" />
+    <img src="https://img.shields.io/badge/AI-LangChain-orange" alt="LangChain" />
+  </p>
+</div>
 
 ---
 
-## 🚀 Project Overview
+## 🌟 Overview
 
-Perplexity is designed to provide users with a clean, intuitive interface for searching and interacting with AI. The application handles user authentication, maintains search history, and leverages Google's Generative AI via LangChain to provide comprehensive answers.
+**Perplexity** is a state-of-the-art, full-stack AI search application designed to provide intelligent, context-aware answers to complex queries. Built with the latest technologies like **React 19**, **Tailwind CSS 4**, and **Express 5**, it offers a seamless and responsive user experience while leveraging powerful LLMs via **LangChain**.
+
+> [!IMPORTANT]
+> This project uses **Gemini 2.5 Flash** for high-performance response generation and **Mistral Small** for intelligent chat title creation.
 
 ---
 
 ## ✨ Key Features
 
-### 🔐 Authentication & Security
-- **Secure Registration & Login**: JWT-based authentication with password hashing using `bcrypt`.
-- **Email Verification**: Integrated email verification flow using Nodemailer and Gmail OAuth2.
-- **Protected Routes**: Middleware-enforced access to private user data and search features.
-- **Session Management**: Secure cookie-based session handling.
+### 🔐 Advanced Authentication
+- **Secure JWT Flow**: Bulletproof authentication using JSON Web Tokens and `bcrypt` hashing.
+- **Email Verification**: Integrated Gmail OAuth2 flow with `nodemailer` for secure user onboarding.
+- **Protected Ecosystem**: Fine-grained access control using custom Auth middleware and Express-validator.
 
-### 🤖 AI-Powered Chat/Search
-- **Intelligent Responses**: Leverages `@langchain/google-genai` for advanced natural language processing.
-- **Context-Aware Interactions**: Support for multi-turn conversations (future-ready models).
-- **Persistent Search History**: All chats and messages are stored in MongoDB for future reference.
+### 🤖 Intelligent AI Engine
+- **Powered by LangChain**: Orchestrates multi-model interactions seamlessly.
+- **Dual-Model Logic**:
+  - **Gemini 2.5 Flash**: Optimized for fast, accurate search results and conversation.
+  - **Mistral Small**: Specially tuned for generating concise, relevant chat titles.
+- **Persistent History**: Full conversation tracking with MongoDB, allowing users to revisit and continue past searches.
 
-### 💻 Modern User Interface
-- **Responsive Design**: Built with Tailwind CSS for a premium, mobile-friendly experience.
-- **Real-time Feedback**: Loading states, error handling, and smooth transitions.
-- **Interactive Dashboard**: A dedicated space for users to manage their searches and profile.
+### 🚀 Real-time & Modern UI
+- **Socket.io Integration**: Enabling real-time communication and future-ready streaming features.
+- **Next-Gen CSS**: Styled with **Tailwind CSS 4**, featuring a modern "Glassmorphism" aesthetic and optimized layouts.
+- **Responsive Dashboard**: A premium user interface that adapts perfectly to any device.
 
 ---
 
 ## 🛠 Tech Stack
 
-### Frontend
-| Feature | Technology |
-| --- | --- |
-| **Framework** | React 19 (Vite) |
-| **State Management** | Redux Toolkit |
-| **Routing** | React Router 7 |
-| **Styling** | Tailwind CSS 4 |
-| **API Client** | Axios |
+### Frontend Architecture
+- **Framework**: [React 19](https://react.dev/) (Vite-powered)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **State Management**: [Redux Toolkit](https://redux-toolkit.js.org/)
+- **Routing**: [React Router 7](https://reactrouter.com/)
+- **API Communication**: [Axios](https://axios-http.com/)
 
-### Backend
-| Feature | Technology |
-| --- | --- |
-| **Runtime** | Node.js (ES Modules) |
-| **Framework** | Express 5 |
-| **Database** | MongoDB & Mongoose |
-| **AI Integration** | LangChain & Google GenAI |
-| **Authentication** | JSON Web Tokens (JWT) |
-| **Validation** | Express Validator |
-| **Logging** | Morgan |
+### Backend Infrastructure
+- **Runtime**: Node.js (ES Modules)
+- **Framework**: [Express 5](https://expressjs.com/)
+- **Database**: [MongoDB](https://www.mongodb.com/) (ODM: Mongoose 9.3)
+- **Real-time**: [Socket.io](https://socket.io/)
+- **AI Integration**: [LangChain](https://js.langchain.com/)
+- **Mailing**: [Nodemailer](https://nodemailer.com/)
 
 ---
 
-## 📂 Project Architecture
+## 📂 Project Structure
 
-### Frontend Structure (`perplexity-FE`)
-- **`src/app`**: Core application setup, including Redux store and routing configurations.
-- **`src/features/auth`**: Authentication-specific components, hooks, and Redux slices.
-- **`src/features/chat`**: Search and chat-related pages and logic.
-- **`src/service`**: Centralized API service layer for backend communication.
-
-### Backend Structure (`perplexity-BE`)
-- **`src/controllers`**: Request handling logic for Auth and Search.
-- **`src/models`**: Mongoose schemas for Users, Chats, and Messages.
-- **`src/routes`**: API endpoint definitions.
-- **`src/middlewares`**: Logic for authentication guards and error handling.
-- **`src/services`**: External integrations (Email, AI).
-- **`src/validators`**: Request payload validation rules.
-
----
-
-## 📊 Data Models
-
-### User
-Stores account details, including verified status and hashed credentials.
-
-### Chat
-Represents a search session or conversation thread belonging to a specific user.
-
-### Message
-Contains individual interaction components (User query vs. AI response) within a specific chat.
+```bash
+perplexity/
+├── perplexity-BE/          # Express 5 Backend
+│   ├── src/
+│   │   ├── controllers/    # Business logic
+│   │   ├── models/         # Mongoose schemas
+│   │   ├── routes/         # API endpoints
+│   │   ├── services/       # AI & Mail integration
+│   │   ├── sockets/        # Real-time logic
+│   │   └── validators/     # Request validation
+├── perplexity-FE/          # React 19 Frontend
+│   ├── src/
+│   │   ├── app/            # Store & Routing
+│   │   ├── features/       # Modular features (Auth, Chat)
+│   │   └── components/     # UI Building blocks
+```
 
 ---
 
-## 🗺 Future Roadmap
-- [ ] Integration with more LLM providers.
-- [ ] Enhanced search citations and source linking.
-- [ ] Dark/Light mode toggle enhancements.
-- [ ] Real-time typing effects for AI responses.
+## 🚦 Getting Started
+
+### 1. Prerequisites
+- Node.js (v18+)
+- MongoDB Atlas account or local instance
+- API Keys for Google Gemini and Mistral AI
+
+### 2. Backend Setup
+```bash
+cd perplexity-BE
+npm install
+
+# Create a .env file with the following variables:
+PORT=3000
+MONGO_URI=your_mongodb_uri
+JWT_SECRET=your_jwt_secret
+GEMINI_API_KEY=your_gemini_key
+MISTRAL_API_KEY=your_mistral_key
+GOOGLE_USER=your_email
+GOOGLE_CLIENT_ID=your_id
+GOOGLE_CLIENT_SECRET=your_secret
+GOOGLE_REFRESH_TOKEN=your_token
+
+npm run dev
+```
+
+### 3. Frontend Setup
+```bash
+cd perplexity-FE
+npm install
+npm run dev
+```
+
+---
+
+## 🔌 API Endpoints Summary
+
+| Method | Endpoint | Description | Auth Required |
+| --- | --- | --- | --- |
+| `POST` | `/api/auth/register` | Register new user | No |
+| `POST` | `/api/auth/login` | Login user | No |
+| `POST` | `/api/chat/message` | Send query to AI | Yes |
+| `GET` | `/api/chat/` | Fetch chat history | Yes |
+| `DELETE` | `/api/chat/delete/:id` | Delete a chat | Yes |
+
+---
+
+## 🗺 Future Goals
+- [ ] Support for local LLMs (Ollama integration).
+- [ ] Real-time citations for AI answers.
+- [ ] Collaborative shared chat links.
+- [ ] Advanced file search & context upload.
 
 ---
 
 ## 📜 License
-This project is licensed under the ISC License.
+This project is licensed under the **ISC License**.
