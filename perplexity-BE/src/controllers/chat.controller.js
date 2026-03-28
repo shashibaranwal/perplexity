@@ -4,41 +4,53 @@ import messageModel from "../models/message.model.js";
 
 
 export const sendMessage = async (req, res) => {
+  try {
     const { message, chat: chatId } = req.body;
     let title = null, chat = null;
 
-    if(!chatId){
-        title = await generateChatTitle(message);
+    if (!chatId) {
+      title = await generateChatTitle(message);
 
-        chat = await chatModel.create({
-            user: req.user.id,
-            title,
-        })
+      chat = await chatModel.create({
+        user: req.user.id,
+        title,
+      });
     }
 
-    const userMessage = await messageModel.create({
-        chat: chatId || chat._id,
-        content: message,
-        role: 'user'
-    })
+    const currentChatId = chatId || chat._id;
 
-    const messages = await messageModel.find({chat: chatId})
+    await messageModel.create({
+      chat: currentChatId,
+      content: message,
+      role: 'user'
+    });
 
-    const result = await generateResponse(messages);
+    const messages = await messageModel.find({ chat: currentChatId });
+
+    const formattedMessages = messages.map(msg => ({
+      role: msg.role === 'AI' ? 'assistant' : 'user',
+      content: msg.content
+    }));
+
+    const result = await generateResponse(formattedMessages);
 
     const aiMessage = await messageModel.create({
-        chat: chatId || chat._id,
-        content: result,
-        role: 'AI'
-    })
-    console.log(messages);
-    
+      chat: currentChatId,
+      content: result,
+      role: 'AI'
+    });
+
     res.status(201).json({
-        title,
-        chat,
-        aiMessage
-    })
-}
+      title,
+      chat,
+      aiMessage
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
 
 export const getChats = async (req, res) => {
     const user = req.user
