@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useChat } from "../hook/useChat.js";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 
 const Dashboard = () => {
   const chat = useChat();
@@ -122,7 +123,7 @@ const Dashboard = () => {
                   key={message.id}
                   className={`flex ${message.role === "user" ? "justify-end" : "justify-start items-start space-x-4"}`}
                 >
-                  {message.role === "ai" && (
+                  {message.role === "AI" && (
                     <div className="w-8 h-8 rounded-full bg-cyan-600/20 border border-cyan-500/50 flex shrink-0 items-center justify-center mt-1 shadow-[0_0_10px_rgba(8,145,178,0.2)]">
                       <svg
                         className="w-4 h-4 text-cyan-500"
@@ -143,7 +144,7 @@ const Dashboard = () => {
                   <div
                     className={`${message.role === "user" ? "bg-zinc-800 bg-opacity-60 text-white px-5 py-3 rounded-2xl rounded-tr-sm max-w-[80%] border border-zinc-700/50 shadow-md backdrop-blur-sm" : "text-zinc-200 px-1 py-1 rounded-2xl max-w-[85%] w-full overflow-hidden"}`}
                   >
-                    {message.role === "ai" ? (
+                    {message.role === "AI" ? (
                       <div className="prose prose-invert prose-zinc max-w-full prose-p:leading-relaxed prose-pre:bg-zinc-800 prose-pre:border prose-pre:border-zinc-700 mt-1">
                         <ReactMarkdown
                           remarkPlugins={[remarkGfm, remarkBreaks]}
