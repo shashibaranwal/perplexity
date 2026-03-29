@@ -13,23 +13,25 @@ export const useChat = () => {
         const { chat, aiMessage } = data;
         console.log(aiMessage);
 
-        dispatch(createNewChat({
+        if(!chatId){
+            dispatch(createNewChat({
             chatId: chat._id,
             title: chat.title,
         }))
+        }
 
         dispatch(addNewMessage({
-            chatId: chat._id,
+            chatId: chatId || chat._id,
             content: message,
             role: "user",
         }))
         dispatch(addNewMessage({
-            chatId: chat._id,
+            chatId: chatId || chat._id,
             content: aiMessage.content,
             role: aiMessage.role,
         }))
 
-        dispatch(setCurrentChatId(chat._id));
+        dispatch(setCurrentChatId(chatId || chat._id));
         dispatch(setLoading(false));
 
 
