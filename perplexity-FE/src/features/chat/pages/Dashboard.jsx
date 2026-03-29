@@ -116,7 +116,7 @@ const Dashboard = () => {
             </button>
 
             {/* Chat Data */}
-            <div className="w-full max-w-3xl flex flex-col space-y-6 mb-8 mt-4 overflow-y-auto max-h-[60vh] px-4 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+            <div className="w-full max-w-3xl flex flex-col space-y-6 mb-8 mt-4 overflow-y-auto max-h-[60vh] px-4">
               {(chats[currentChatId]?.messages || []).map((message) => (
                 <div
                   key={message.id}
@@ -201,7 +201,7 @@ const Dashboard = () => {
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
                 placeholder="Start your request, and let Orion handle everything."
-                className="bg-transparent w-full text-white placeholder-gray-500 outline-none text-lg px-2"
+                className="bg-transparent w-full text-white placeholder-gray-500 outline-none text-lg px-2 max-h-20 overflow-y-auto resize-none"
               />
               <div className="flex flex-wrap justify-between items-center pt-4 gap-4">
                 <div className="flex flex-wrap space-x-3 gap-y-2">
