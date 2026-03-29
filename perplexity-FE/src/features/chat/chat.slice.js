@@ -11,7 +11,7 @@ const chatSlice = createSlice({
 
   reducers: {
     createNewChat: (state, action) => {
-      const {chatId, title } = action.payload;
+      const { chatId, title } = action.payload;
       state.chats[chatId] = {
         id: chatId,
         title,
@@ -23,6 +23,23 @@ const chatSlice = createSlice({
     addNewMessage: (state, action) => {
       const { chatId, content, role } = action.payload;
       state.chats[chatId].messages.push({ content, role });
+    },
+    addMessages: (state, action) => {
+      const { chatId, messages } = action.payload;
+
+      if (!state.chats[chatId]) {
+        state.chats[chatId] = {
+          id: chatId,
+          title: "New Chat",
+          messages: [],
+          lastUpdated: new Date().toISOString(),
+        };
+      }
+
+      const msgs = Array.isArray(messages) ? messages : [messages];
+
+      // Overwrite the messages entirely instead of pushing to avoid unlimited duplication
+      state.chats[chatId].messages = msgs;
     },
     setChats: (state, action) => {
       state.chats = action.payload
@@ -40,5 +57,5 @@ const chatSlice = createSlice({
 })
 
 
-export const { setChats, setCurrentChatId, setLoading, setError, addNewMessage, createNewChat } = chatSlice.actions
+export const { setChats, setCurrentChatId, setLoading, setError, addNewMessage, createNewChat, addMessages } = chatSlice.actions;
 export default chatSlice.reducer

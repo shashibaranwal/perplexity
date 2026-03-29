@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useChat } from "../hook/useChat.js";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const Dashboard = () => {
   const chat = useChat();
   const [chatInput, setChatInput] = useState("");
-  const [userMessage, setUserMessage] = useState("");
-
 
   const chats = useSelector((state) => state.chat.chats);
   const currentChatId = useSelector((state) => state.chat.currentChatId);
-  
+
   useEffect(() => {
     chat.initializeSocketConnection();
+    chat.handleGetChats();
   }, []);
-  
+
   const handleSubmitMessage = (e) => {
     e.preventDefault();
     const trimmedMessage = chatInput.trim();
@@ -24,8 +25,10 @@ const Dashboard = () => {
     setChatInput("");
   };
 
-
-
+  const openChat = (chatId) => {
+    chat.handleOpenChat(chatId);
+    currentChatId = chatId;
+  };
 
   return (
     <div className="flex h-screen w-screen bg-[#070b09] text-gray-200 overflow-hidden font-sans p-4">
@@ -114,7 +117,7 @@ const Dashboard = () => {
 
             {/* Chat Data */}
             <div className="w-full max-w-3xl flex flex-col space-y-6 mb-8 mt-4 overflow-y-auto max-h-[60vh] px-4 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
-              {chats[currentChatId]?.messages.map((message) => (
+              {(chats[currentChatId]?.messages || []).map((message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.role === "user" ? "justify-end" : "justify-start items-start space-x-4"}`}
@@ -138,27 +141,50 @@ const Dashboard = () => {
                     </div>
                   )}
                   <div
-                    className={`${message.role === "user" ? "bg-zinc-800 bg-opacity-60 text-white px-5 py-3 rounded-2xl rounded-tr-sm max-w-[80%] border border-zinc-700/50 shadow-md backdrop-blur-sm" : "text-zinc-200 px-1 py-1 rounded-2xl max-w-[85%]"}`}
+                    className={`${message.role === "user" ? "bg-zinc-800 bg-opacity-60 text-white px-5 py-3 rounded-2xl rounded-tr-sm max-w-[80%] border border-zinc-700/50 shadow-md backdrop-blur-sm" : "text-zinc-200 px-1 py-1 rounded-2xl max-w-[85%] w-full overflow-hidden"}`}
                   >
                     {message.role === "ai" ? (
-                      message.content
-                        .split("\n\n")
-                        .map((paragraph, index) => (
-                          <p
-                            key={index}
-                            className="text-[15px] leading-relaxed mb-3"
-                            dangerouslySetInnerHTML={{
-                              __html: paragraph
-                                .replace(
-                                  /\*\*(.*?)\*\*/g,
-                                  "<strong>$1</strong>",
-                                )
-                                .replace(/\*(.*?)\*/g, "<em>$1</em>"),
-                            }}
-                          />
-                        ))
+                      <div className="prose prose-invert prose-zinc max-w-full prose-p:leading-relaxed prose-pre:bg-zinc-800 prose-pre:border prose-pre:border-zinc-700 mt-1">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm, remarkBreaks]}
+                          components={{
+                            h1: ({ children }) => (
+                              <h1 className="text-xl font-bold mb-3">
+                                {children}
+                              </h1>
+                            ),
+                            h2: ({ children }) => (
+                              <h2 className="text-lg font-semibold mb-2">
+                                {children}
+                              </h2>
+                            ),
+                            p: ({ children }) => (
+                              <p className="mb-3 leading-relaxed">{children}</p>
+                            ),
+                            li: ({ children }) => (
+                              <li className="ml-4 list-disc mb-1">
+                                {children}
+                              </li>
+                            ),
+                            code: ({ inline, children }) =>
+                              inline ? (
+                                <code className="bg-zinc-800 px-1 rounded">
+                                  {children}
+                                </code>
+                              ) : (
+                                <pre className="bg-zinc-800 p-3 rounded overflow-x-auto">
+                                  <code>{children}</code>
+                                </pre>
+                              ),
+                          }}
+                        >
+                          {message.content || ""}
+                        </ReactMarkdown>
+                      </div>
                     ) : (
-                      <p className="text-[15px] leading-relaxed">{message.content}</p>
+                      <p className="text-[15px] leading-relaxed m-0">
+                        {message.content}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -166,7 +192,7 @@ const Dashboard = () => {
             </div>
 
             {/* Input Box */}
-            <form 
+            <form
               onSubmit={handleSubmitMessage}
               className="w-full max-w-2xl bg-[#0a100d] border border-[#1d2924] rounded-2xl p-4 flex flex-col space-y-4 shadow-xl relative z-10 mx-auto"
             >
@@ -179,21 +205,36 @@ const Dashboard = () => {
               />
               <div className="flex flex-wrap justify-between items-center pt-4 gap-4">
                 <div className="flex flex-wrap space-x-3 gap-y-2">
-                  <button type="button" className="w-10 h-10 rounded-full border border-[#1d2924] flex justify-center items-center text-gray-400 hover:text-white transition">
+                  <button
+                    type="button"
+                    className="w-10 h-10 rounded-full border border-[#1d2924] flex justify-center items-center text-gray-400 hover:text-white transition"
+                  >
                     📎
                   </button>
-                  <button type="button" className="px-4 py-2 border border-[#1d2924] rounded-full text-sm text-gray-300 flex items-center space-x-2 hover:bg-[#131d18] transition">
+                  <button
+                    type="button"
+                    className="px-4 py-2 border border-[#1d2924] rounded-full text-sm text-gray-300 flex items-center space-x-2 hover:bg-[#131d18] transition"
+                  >
                     <span>💡</span> <span>Reasoning</span>
                   </button>
-                  <button type="button" className="px-4 py-2 border border-[#1d2924] rounded-full text-sm text-gray-300 flex items-center space-x-2 hover:bg-[#131d18] transition">
+                  <button
+                    type="button"
+                    className="px-4 py-2 border border-[#1d2924] rounded-full text-sm text-gray-300 flex items-center space-x-2 hover:bg-[#131d18] transition"
+                  >
                     <span>📊</span> <span>Deep Research</span>
                   </button>
                 </div>
                 <div className="flex items-center space-x-3 ml-auto">
-                  <button type="button" className="w-10 h-10 rounded-full border border-[#1d2924] flex justify-center items-center text-gray-400 hover:text-white transition">
+                  <button
+                    type="button"
+                    className="w-10 h-10 rounded-full border border-[#1d2924] flex justify-center items-center text-gray-400 hover:text-white transition"
+                  >
                     🎤
                   </button>
-                  <button type="submit" className="w-10 h-10 rounded-full bg-linear-to-br from-[#0891b2] to-[#0891b2] flex justify-center items-center text-black hover:scale-105 transition shadow-[0_0_15px_rgba(8,145,178,0.4)]">
+                  <button
+                    type="submit"
+                    className="w-10 h-10 rounded-full bg-linear-to-br from-[#0891b2] to-[#0891b2] flex justify-center items-center text-black hover:scale-105 transition shadow-[0_0_15px_rgba(8,145,178,0.4)]"
+                  >
                     ➤
                   </button>
                 </div>
@@ -204,7 +245,7 @@ const Dashboard = () => {
 
         {/* Right Sidebar - Chat History */}
         <div className="w-80 border-l border-[#1a231f] bg-[#0d1410]/50 p-6 flex flex-col shrink-0">
-          <div className="flex justify-between items-center mb-6 flex-shrink-0">
+          <div className="flex justify-between items-center mb-6 shrink-0">
             <h2 className="text-lg font-medium text-white">History Chat</h2>
             <button className="px-3 py-1.5 bg-[#131d18] text-white text-xs border border-[#1d2924] rounded-full hover:border-[#0891b2] transition">
               + New Chat
@@ -216,42 +257,17 @@ const Dashboard = () => {
             <div>
               <p className="text-xs text-gray-500 mb-3 block">Today</p>
               <div className="space-y-2">
-                {[
-                  "Last week, mortgage rates rose s...",
-                  "Two weeks ago, rates dipped to 6...",
-                  "Three weeks ago, rates increase...",
-                  "A month ago, rates remained sta...",
-                  "Recent months show gradual ris...",
-                ].map((text, i) => (
+                {Object.values(chats).map((chat, index) => (
                   <div
-                    key={i}
+                    onClick={() => {
+                      openChat(chat.id);
+                    }}
+                    key={index}
                     className="flex items-center space-x-3 p-3 bg-[#0a100d] border border-[#1a231f] rounded-xl hover:border-[#0891b2]/50 cursor-pointer transition"
                   >
                     <span className="text-gray-500 text-sm shrink-0">💬</span>
                     <span className="text-sm text-gray-300 truncate w-full block">
-                      {text}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 5 Days Ago */}
-            <div>
-              <p className="text-xs text-gray-500 mb-3 block">5 Days Ago</p>
-              <div className="space-y-2">
-                {[
-                  "Five weeks ago, mortgage rates a...",
-                  "Earlier this year, rates dropped to...",
-                  "January saw rates rise quickly fro...",
-                ].map((text, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center space-x-3 p-3 bg-[#0a100d] border border-[#1a231f] rounded-xl hover:border-[#0891b2]/50 cursor-pointer transition"
-                  >
-                    <span className="text-gray-500 text-sm shrink-0">💬</span>
-                    <span className="text-sm text-gray-300 truncate w-full block">
-                      {text}
+                      {chat.title}
                     </span>
                   </div>
                 ))}
