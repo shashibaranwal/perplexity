@@ -81,28 +81,7 @@ const Dashboard = () => {
               </button>
             </div>
 
-            {/* User Controls */}
-            <div className="flex items-center space-x-4 bg-[#0d1410] rounded-full p-2 border border-[#1a231f] shrink-0">
-              <button className="w-8 h-8 rounded-full hover:bg-white/10 flex justify-center items-center text-gray-400">
-                ☼
-              </button>
-              <button className="w-8 h-8 rounded-full hover:bg-white/10 flex justify-center items-center text-[#0891b2]">
-                ☾
-              </button>
-              <button className="w-8 h-8 rounded-full hover:bg-white/10 flex justify-center items-center text-gray-400">
-                💬
-              </button>
-              <button className="w-8 h-8 rounded-full hover:bg-white/10 flex justify-center items-center text-gray-400">
-                🔔
-              </button>
-              <div className="w-8 h-8 rounded-full bg-gray-500 overflow-hidden ml-2 shrink-0">
-                <img
-                  src="https://ui-avatars.com/api/?name=User&background=random"
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
+            
           </div>
 
           {/* Chat Interface */}
